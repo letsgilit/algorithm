@@ -3,13 +3,17 @@ import java.io.*;
 
 public class Main {
     static List<Integer> LIS;
+
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+
         int N = Integer.parseInt(br.readLine());
         int[] arr = new int[N];
         int[] markIndex = new int[N];
 
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         for (int i = 0; i < N; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
@@ -20,7 +24,9 @@ public class Main {
 
         for (int i = 1; i < N; i++) {
             int key = arr[i];
-            if (key > LIS.get(LIS.size() - 1)) {
+            int last = LIS.get(LIS.size() - 1);
+
+            if (last < key) {
                 LIS.add(key);
                 markIndex[i] = LIS.size() - 1;
             } else {
@@ -30,30 +36,36 @@ public class Main {
             }
         }
 
-        System.out.println(LIS.size());
+        int startIdx = markIndex.length - 1;
+        int[] answer = new int[LIS.size()];
 
-        int index = LIS.size() - 1;
-        Stack<Integer> stack = new Stack<>();
-        for (int i = N - 1; i >= 0; i--) {
-            if (markIndex[i] == index) {
-                index--;
-                stack.push(arr[i]);
+        for (int i = LIS.size() - 1; i >= 0; i--) {
+            for (int j = startIdx; j >= 0; j--) {
+                if (i == markIndex[j]) {
+                    startIdx = j;
+                    answer[i] = arr[j];
+                    break;
+                }
             }
         }
 
-        StringBuilder sb = new StringBuilder();
-        while (!stack.isEmpty()) {
-            sb.append(stack.pop()).append(" ");
+        sb.append(LIS.size()).append("\n");
+        for (int i : answer) {
+            sb.append(i).append(" ");
         }
+
         System.out.println(sb);
     }
 
     static int binarySearch(int key) {
-        int lo = 0, hi = LIS.size() - 1;
+        int lo = 0;
+        int hi = LIS.size() - 1;
         while (lo < hi) {
             int mid = (lo + hi) / 2;
-            if (LIS.get(mid) >= key) hi = mid;
-            else lo = mid + 1;
+            if (LIS.get(mid) >= key)
+                hi = mid;
+            else
+                lo = mid + 1;
         }
         return hi;
     }
