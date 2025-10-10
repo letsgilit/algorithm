@@ -46,7 +46,7 @@ class Solution {
 			dfs(nx, ny, cnt + 1, sb);
 			sb.deleteCharAt(sb.length() - 1);
 
-			if (found) return;
+			
 		}
 	}
 
